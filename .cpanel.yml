@@ -2,4 +2,6 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/anthonyc/public_html/
-    - /bin/cp src/main.tsx $DEPLOYPATH
+    - /bin/cp dist/server/bundle.js $DEPLOYPATH
+    - npm install
+    - /bin/node dist/server/bundle.js
