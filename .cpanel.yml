@@ -2,4 +2,5 @@
 deployment:
   tasks:
     - export DEPLOYPATH=/home/anthonyc/public_html/
-    - /bin/cp -R dist $DEPLOYPATH
+    - /bin/cp dist/bundle.js $DEPLOYPATH
+    - /bin/cp dist/index.html $DEPLOYPATH
