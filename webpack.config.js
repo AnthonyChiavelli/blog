@@ -2,14 +2,6 @@ const path = require('path');
 const HtmlWebpackPlugin = require('html-webpack-plugin')
 const nodeExternals = require('webpack-node-externals');
 
-
-var fs = require('fs');
-var nodeModules = {};
-fs.readdirSync(path.resolve(__dirname, 'node_modules'))
-    .filter(x => ['.bin'].indexOf(x) === -1)
-    .forEach(mod => { nodeModules[mod] = `commonjs ${mod}`; });
-
-
 const webapp = {
   mode: 'development',
   entry: './src/main.tsx',

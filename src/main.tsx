@@ -1,12 +1,9 @@
 import * as React from "react";
 import * as ReactDOM from "react-dom";
-
-function Header() {
-    return <div>Welcome</div>
-}
-
+import App from 'components/App';
 
 ReactDOM.render(
-    <Header/>,
+    <App/>,
     document.getElementById("react-root")
 );
+
