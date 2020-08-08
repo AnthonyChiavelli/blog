@@ -26,5 +26,5 @@ app.get('*', function (request, response) {
 
 app.listen(SERVER_PORT, async () => {
   console.log(`Server running on port ${SERVER_PORT}`)
-  initializeDB()
+  // initializeDB()
 })
