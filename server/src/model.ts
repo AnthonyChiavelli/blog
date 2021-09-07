@@ -24,7 +24,7 @@ class Schema {
   _validationErrors: string[] = []
 
   static _isPrimitiveConstructor(val: any) {
-    return ([String, Number, Boolean] as any[]).includes(val)
+    return ([String, Number, Boolean, Date] as any[]).includes(val)
   }
 
   constructor(schema: ISchemaSpec) {
@@ -40,6 +40,8 @@ class Schema {
           else {
             if (typeof def === 'object' && def.default !== undefined) {
               obj[name] = def.default
+            } else {
+              return
             }
           }
         }
@@ -128,8 +130,8 @@ function model(name: string, schema: Schema) {
     _toObject() {
       const obj: { [k: string]: any } = {}
       if (this._id) obj._id = this._id
-      // if (this.createdAt) obj.createdAt = this.createdAt
-      // if (this.updatedAt) obj.updatedAt = this.updatedAt
+      if (this.createdAt) obj.createdAt = this.createdAt
+      if (this.updatedAt) obj.updatedAt = this.updatedAt
 
       Object.entries(schema.schema).forEach(([fieldName]) => {
         if (fieldName in this) obj[fieldName] = this[fieldName]
@@ -170,6 +172,12 @@ export const BlogPostModel = model(
   new Schema({
     title: String,
     body: String,
+    blurb: String,
+    imageUrl: String,
+    publishedAt: {
+      type: Date,
+      optional: true,
+    },
     published: {
       type: Boolean,
       default: false,

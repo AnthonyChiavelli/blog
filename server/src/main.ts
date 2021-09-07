@@ -21,7 +21,16 @@ app.listen(SERVER_PORT, async () => {
 
 app.on('dbReady', (): void => {
   app.get(API_PREFIX + 'posts/', async function (request, response) {
-    const posts = await BlogPostModel.find({}, { sort: { createdAt: -1 } })
+    // const p = new BlogPostModel()
+    // p.title = 'How to stack your cats'
+    // p.blurb = 'Three cats are thrice as fun - but storing them can be anything but!'
+    // p.imageUrl = 'https://i.ytimg.com/vi/3ySWSywh-V0/hqdefault.jpg'
+    // p.body = 'Back in the old country, narrow cat closets were a fact of life. '
+    // p.published = true
+    // p.save()
+
+    const includeDrafts = request.query.includeDrafts === 'true'
+    const posts = await BlogPostModel.find(includeDrafts ? {} : { published: true }, { sort: { createdAt: -1 } })
     response.send(posts.map((p) => p.toJson()))
   })
 
@@ -30,7 +39,14 @@ app.on('dbReady', (): void => {
     response.send(post ? post.toJson() : undefined)
   })
 
-  // TODO add error page for api/BS
+  app.get(API_PREFIX + 'adminStatus/', async function (request, response) {
+    const isAdmin = request.query.token === process.env.ADMIN_TOKEN
+    response.send({ isAdmin: isAdmin })
+  })
+
+  app.get(API_PREFIX + '*', async function (request, response) {
+    response.sendStatus(404)
+  })
 
   // Serve the js bundle at its path and the HTML bundle at every other path
   app.get('*/bundle.js', function (req, res) {

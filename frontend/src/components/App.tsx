@@ -8,7 +8,7 @@ import { Container, Segment } from 'semantic-ui-react'
 
 export default function (): React.ReactElement {
   return (
-    <Container style={{ marginTop: '2em' }} fluid>
+    <Container style={{ marginTop: '2em' }}>
       <BrowserRouter>
         <Nav />
         <Switch>

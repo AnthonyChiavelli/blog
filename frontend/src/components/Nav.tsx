@@ -1,17 +1,26 @@
+import { useAdminStatus } from 'hooks'
 import * as React from 'react'
 import { Link } from 'react-router-dom'
-import { Grid } from 'semantic-ui-react'
+import { Menu } from 'semantic-ui-react'
 
 export default function (): React.ReactElement {
+  const isAdmin = useAdminStatus()
   return (
-    <Grid centered style={{ border: 'none !important', marginBottom: '20' }}>
-      <Grid.Column>
-        <Link to="/">Home</Link>
-      </Grid.Column>
+    <Menu text>
+      <Menu.Menu position="right">
+        <Menu.Item>
+          <Link to="/">Home</Link>
+        </Menu.Item>
 
-      <Grid.Column>
-        <Link to="/blog">Blog</Link>
-      </Grid.Column>
-    </Grid>
+        <Menu.Item>
+          <Link to="/blog">Blog</Link>
+        </Menu.Item>
+        {isAdmin && (
+          <Menu.Item>
+            <Link to="/admin">Admin</Link>
+          </Menu.Item>
+        )}
+      </Menu.Menu>
+    </Menu>
   )
 }

@@ -38,6 +38,7 @@
     "webpack-cli": "^3.3.12"
   },
   "dependencies": {
+    "@types/moment": "^2.13.0",
     "axios": "^0.21.1",
     "css-loader": "^6.2.0",
     "dotenv-webpack": "^7.0.3",
@@ -46,6 +47,7 @@
     "file-loader": "^6.2.0",
     "knex": "^0.21.2",
     "less-loader": "^10.0.1",
+    "moment": "^2.29.1",
     "mysql": "^2.14.1",
     "nodemon": "^2.0.12",
     "objection": "^2.2.2",
