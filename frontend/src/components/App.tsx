@@ -1,10 +1,11 @@
 import Nav from 'components/Nav'
 import BlogList from 'pages/BlogList'
 import BlogPost from 'pages/BlogPost'
+import Home from 'pages/Home'
 import * as React from 'react'
 import { BrowserRouter, Route, Switch } from 'react-router-dom'
 import 'semantic-ui-css/semantic.min.css'
-import { Container, Segment } from 'semantic-ui-react'
+import { Container } from 'semantic-ui-react'
 
 export default function (): React.ReactElement {
   return (
@@ -14,7 +15,7 @@ export default function (): React.ReactElement {
         <Switch>
           <Container>
             <Route exact path="/">
-              <Segment>Home</Segment>
+              <Home />
             </Route>
             <Route exact path="/blog/">
               <BlogList />

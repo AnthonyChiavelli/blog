@@ -18,7 +18,7 @@ export default function (): React.ReactElement {
       <List>
         {articles.map((a) => (
           <List.Item key={a._id} style={{ marginBottom: 50 }}>
-            <Container text>
+            <Container>
               <Header as={'h2'} style={{ marginBottom: 20 }}>
                 {a.title}
               </Header>
