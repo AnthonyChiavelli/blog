@@ -23,6 +23,7 @@ const server = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, '..', 'dist', 'server'),
+    publicPath: 'public'
   },
 }
 
