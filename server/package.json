@@ -9,7 +9,8 @@
     "watch": "nodemon ../dist/server/bundle.js",
     "serve": "npm-run-all -p build watch",
     "lint": "eslint . --ext .ts,.tsx",
-    "prettier": "prettier . --write --ignore-unkown"
+    "prettier": "prettier . --write --ignore-unkown",
+    "clean": "npm-run-all lint prettier"
   },
   "devDependencies": {
     "@types/axios": "^0.14.0",
@@ -24,6 +25,7 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
+    "@types/loglevel": "^1.6.3",
     "@types/mongodb": "3.5.0",
     "@types/node": "^16.6.1",
     "@types/query-string": "^6.3.0",
@@ -35,6 +37,7 @@
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "express": "^4.17.1",
+    "loglevel": "^1.8.0",
     "mongodb": "3.5.0",
     "mongodb-client-encryption": "^1.2.7",
     "node": "^16.6.1",

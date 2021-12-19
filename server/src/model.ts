@@ -148,7 +148,7 @@ function model(name: string, schema: Schema) {
       if (this._schema.validate(plainObject)) {
         if (!this._id) {
           plainObject.createdAt = new Date()
-          plainObject.updatedAt = new Date()
+          plainObject.updatedAt = plainObject.createdAt
           const res = await ModelClass.insert(plainObject)
           if (res.insertedCount < 1) throw new Error("Error insertin' document, partner")
           this._id = res.insertedId

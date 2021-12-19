@@ -6,29 +6,24 @@ import { SERVER_PORT } from 'consts'
 import { initializeDB } from 'database'
 import { Db, ObjectId } from 'mongodb'
 import { BlogPostModel } from 'model'
+import * as Logger from 'loglevel'
 
 const API_PREFIX = '/api/'
 
 dotenv.config()
 const app = express()
+Logger.setLevel('info')
 
 app.listen(SERVER_PORT, async () => {
   // eslint-disable-next-line no-console
-  console.log(`Server running on port ${SERVER_PORT}`)
+  Logger.info(`Server running on port ${SERVER_PORT}`)
   const dbClient: Db = await initializeDB()
+  Logger.info(`Connected to database`)
   app.emit('dbReady', dbClient)
 })
 
 app.on('dbReady', (): void => {
   app.get(API_PREFIX + 'posts/', async function (request, response) {
-    // const p = new BlogPostModel()
-    // p.title = 'How to stack your cats'
-    // p.blurb = 'Three cats are thrice as fun - but storing them can be anything but!'
-    // p.imageUrl = 'https://i.ytimg.com/vi/3ySWSywh-V0/hqdefault.jpg'
-    // p.body = 'Back in the old country, narrow cat closets were a fact of life. '
-    // p.published = true
-    // p.save()
-
     const includeDrafts = request.query.includeDrafts === 'true'
     const posts = await BlogPostModel.find(includeDrafts ? {} : { published: true }, { sort: { createdAt: -1 } })
     response.send(posts.map((p) => p.toJson()))

@@ -1,17 +1,14 @@
 const path = require('path')
 
-const nodeExternals = require('webpack-node-externals')
-
 const server = {
   target: 'node',
-  mode: 'development',
+  mode: 'production',
   entry: './src/main.ts',
-  watch: true,
+  // watch: true,
   module: {
     rules: [
       {
         test: /\.tsx?$/,
-        // exclude: /node_modules/,
         use: 'ts-loader',
       },
     ],
@@ -23,7 +20,7 @@ const server = {
   output: {
     filename: 'bundle.js',
     path: path.resolve(__dirname, '..', 'dist', 'server'),
-    publicPath: 'public'
+    publicPath: 'public',
   },
 }
 
