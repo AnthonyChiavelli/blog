@@ -4,15 +4,16 @@ import { IBlogPost } from 'model'
 import moment from 'moment'
 import React from 'react'
 import { Link } from 'react-router-dom'
-import { Button, Container, Header, Icon, Image, List } from 'semantic-ui-react'
+import { Button, Container, Header, Image, List } from 'semantic-ui-react'
 
 export default function (): React.ReactElement {
   const [articles, setArticles] = React.useState<IBlogPost[]>([])
   React.useEffect(() => {
-    Api.getBlogPosts().then((res: AxiosResponse<IBlogPost[]>) => {
+    Api.getBlogPosts('published').then((res: AxiosResponse<IBlogPost[]>) => {
       setArticles(res.data)
     })
   }, [])
+
   return (
     <Container>
       <List>
@@ -25,13 +26,8 @@ export default function (): React.ReactElement {
               <AuthorAttribution article={a} />
               <Image src={a.imageUrl}></Image>
               <Container style={{ marginBottom: 15 }}>{a.blurb}</Container>
-              <Link to={`/blog/${a._id}`}>
-                <Button animated color="blue">
-                  <Button.Content visible>Read On</Button.Content>
-                  <Button.Content hidden>
-                    <Icon name="reply" />
-                  </Button.Content>
-                </Button>
+              <Link to={`/blog/${a.slug}`}>
+                <Button.Content visible>Read On</Button.Content>
               </Link>
             </Container>
           </List.Item>

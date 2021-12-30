@@ -1,9 +1,11 @@
 export interface IBlogPost {
-  _id: number
+  _id: string
   body: string
+  slug: string
   title: string
   imageUrl: string
   blurb: string
-  published?: string
+  published?: boolean
   publishedAt?: Date
+  createdAt?: Date
 }

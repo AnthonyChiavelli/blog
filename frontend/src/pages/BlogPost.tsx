@@ -1,9 +1,10 @@
 import Api from 'api'
 import { AxiosResponse } from 'axios'
+import BlogPostBody from 'components/BlogPostBody'
 import { IBlogPost } from 'model'
 import React from 'react'
-import { Link, useParams } from 'react-router-dom'
-import { Breadcrumb, Container, Loader } from 'semantic-ui-react'
+import { useParams } from 'react-router-dom'
+import { Container, Header, Loader } from 'semantic-ui-react'
 
 export default function (): React.ReactElement {
   const { id } = useParams<{ id: string }>()
@@ -25,15 +26,8 @@ export default function (): React.ReactElement {
   }
   return (
     <Container>
-      <Breadcrumb>
-        <Breadcrumb.Section link as={Link} to="/blog">
-          Blog
-        </Breadcrumb.Section>
-        <Breadcrumb.Divider />
-        <Breadcrumb.Section>{post.title}</Breadcrumb.Section>
-      </Breadcrumb>
-      <div>pooost</div>
-      <div>{post ? post.body : 'loading'}</div>
+      <Header as="h1">{post.title}</Header>
+      <div>{post ? <BlogPostBody contents={post.body} /> : <Loader />}</div>
     </Container>
   )
 }

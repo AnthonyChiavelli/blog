@@ -6,10 +6,12 @@
   "license": "MIT",
   "scripts": {
     "build": "webpack --config webpack.backend.js",
-    "watch": "nodemon ../dist/server/bundle.js",
-    "serve": "npm-run-all -p build watch",
+    "watch": "nodemon ../dist/server/bundle.js --ext ts,tsx,js,jsx --watch ../server/src",
+    "run": "node ../dist/server/bundle.js",
+    "serve": "npm-run-all build run",
+    "sw": "nodemon --exec yarn serve --ext ts,tsx,js,jsx --watch ../server/src",
     "lint": "eslint . --ext .ts,.tsx",
-    "prettier": "prettier . --write --ignore-unkown",
+    "prettier": "prettier . --write --ignore-unknown",
     "clean": "npm-run-all lint prettier"
   },
   "devDependencies": {
@@ -25,18 +27,21 @@
     "webpack-cli": "^4.7.2"
   },
   "dependencies": {
+    "@types/body-parser": "^1.19.2",
     "@types/loglevel": "^1.6.3",
     "@types/mongodb": "3.5.0",
     "@types/node": "^16.6.1",
     "@types/query-string": "^6.3.0",
     "@types/webpack": "^5.28.0",
     "axios": "^0.21.1",
+    "body-parser": "^1.19.1",
     "concurrently": "^6.2.1",
     "css-loader": "^6.3.0",
     "dotenv": "^10.0.0",
     "eslint-config-prettier": "^8.3.0",
     "eslint-plugin-prettier": "^4.0.0",
     "express": "^4.17.1",
+    "express-query-boolean": "^2.0.0",
     "loglevel": "^1.8.0",
     "mongodb": "3.5.0",
     "mongodb-client-encryption": "^1.2.7",

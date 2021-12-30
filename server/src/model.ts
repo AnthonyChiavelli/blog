@@ -1,5 +1,5 @@
 import { _database } from 'database'
-import { FindOneOptions, ObjectId } from 'mongodb'
+import { FindOneOptions, ObjectID, ObjectId } from 'mongodb'
 
 class ValidationError extends Error {
   constructor(message: string) {
@@ -11,6 +11,7 @@ class ValidationError extends Error {
 type IFieldType = StringConstructor | NumberConstructor | DateConstructor | BooleanConstructor
 interface IFieldSpec {
   type: IFieldType
+  unique?: boolean
   default?: any
   optional?: boolean
 }
@@ -50,10 +51,19 @@ class Schema {
         const type = typeof def === 'object' ? def.type : def
 
         if (Schema._isPrimitiveConstructor(type) && typeof type === 'function') {
+          let valueHasValidType
           // eslint-disable-next-line @typescript-eslint/ban-types
-          const valueHasValidType = typeof val === typeof (type as Function)()
+          if (type == Date) {
+            valueHasValidType = val instanceof Date
+          } else {
+            // eslint-disable-next-line @typescript-eslint/ban-types
+            valueHasValidType = typeof val === typeof (type as Function)()
+          }
           if (!valueHasValidType) {
-            throw new ValidationError(`Invalid type for field '${name}': ${val}`)
+            throw new ValidationError(
+              // eslint-disable-next-line @typescript-eslint/ban-types
+              `Invalid type for field '${name}'(type ${typeof (type as Function)}): ${typeof val}`
+            )
           }
         } else {
           throw new Error('Not implemented')
@@ -76,13 +86,11 @@ function model(name: string, schema: Schema) {
   class ModelClass {
     [prop: string]: any
     _modelName: string
-    _schema: Schema
+    static _schema: Schema = schema
     _id: ObjectId
 
     constructor() {
-      // TODO accept vals in const
       this._modelName = name
-      this._schema = schema
     }
 
     static _toModel(object: Record<string, unknown>): ModelClass {
@@ -112,7 +120,14 @@ function model(name: string, schema: Schema) {
     }
 
     static async insert(data: Record<string, unknown>) {
-      return ModelClass.getCollection().insertOne(data)
+      Object.entries(ModelClass._schema.schema).forEach(async ([fieldName, fieldSpec]) => {
+        if (typeof fieldSpec === 'object' && fieldSpec.unique && data[fieldName]) {
+          if (await ModelClass.getCollection().findOne({ [fieldName]: data[fieldName] })) {
+            throw new Error(`Unique key constraint (${fieldName}=${data[fieldName]})`)
+          }
+        }
+      })
+      return await ModelClass.getCollection().insertOne(data)
     }
     static async update(id: ObjectId, data: Record<string, unknown>) {
       // TODO use $set query
@@ -124,7 +139,9 @@ function model(name: string, schema: Schema) {
     }
 
     toJson() {
-      return this._toObject()
+      const obj = this._toObject()
+      obj._id = new ObjectID(obj._id)
+      return obj
     }
 
     _toObject() {
@@ -139,27 +156,50 @@ function model(name: string, schema: Schema) {
       return obj
     }
 
-    reload() {
-      // TODO imp
+    async reload() {
+      const object = await ModelClass.getCollection().findOne({ _id: this._id })
+      Object.entries(object).forEach(([k, v]) => {
+        this[k] = v
+      })
+      return this
+    }
+
+    patch(data: Record<string, unknown>) {
+      Object.entries(data).forEach(([k, v]) => {
+        this[k] = v
+      })
+    }
+
+    async getDiff() {
+      const current = this._toObject()
+      const persisted = await ModelClass.findOne({ _id: current._id })
+      const diff: { [k: string]: any } = {}
+      Object.entries(current).forEach(([k, v]) => {
+        if (current[k] !== persisted[k]) {
+          diff[k] = v
+        }
+      })
+      return diff
     }
 
     async save() {
       const plainObject = this._toObject()
-      if (this._schema.validate(plainObject)) {
+      if (ModelClass._schema.validate(plainObject)) {
         if (!this._id) {
           plainObject.createdAt = new Date()
           plainObject.updatedAt = plainObject.createdAt
+          // TODO cheating for now, use current model instead of hard-coding BlogPostModel
           const res = await ModelClass.insert(plainObject)
           if (res.insertedCount < 1) throw new Error("Error insertin' document, partner")
           this._id = res.insertedId
           return this
         } else {
-          plainObject.updatedAt = new Date()
-          await ModelClass.update(this._id, plainObject)
+          this.updatedAt = new Date()
+          const update = await this.getDiff()
+          await ModelClass.update(this._id, { $set: update })
         }
       } else {
-        // eslint-disable-next-line no-console
-        console.error('Validation errors: ' + this._schema._validationErrors.join(', '))
+        throw Error('Validation errors: ' + this._schema._validationErrors.join(', '))
       }
     }
   }
@@ -172,8 +212,15 @@ export const BlogPostModel = model(
   new Schema({
     title: String,
     body: String,
+    slug: {
+      type: String,
+      unique: true,
+    },
     blurb: String,
-    imageUrl: String,
+    imageUrl: {
+      type: String,
+      optional: true,
+    },
     publishedAt: {
       type: Date,
       optional: true,

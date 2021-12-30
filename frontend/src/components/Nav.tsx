@@ -8,12 +8,12 @@ export default function (): React.ReactElement {
   return (
     <Menu text>
       <Menu.Menu position="right">
-        <Menu.Item>
+        {/* <Menu.Item>
           <Link to="/">Home</Link>
-        </Menu.Item>
+        </Menu.Item> */}
 
         <Menu.Item>
-          <Link to="/blog">Blog</Link>
+          <Link to="/">Home</Link>
         </Menu.Item>
         {isAdmin && (
           <Menu.Item>
